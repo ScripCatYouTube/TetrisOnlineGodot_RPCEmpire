@@ -1,0 +1,39 @@
+[gd_scene load_steps=5 format=3 uid="uid://b0pr8id05mjrd"]
+
+[ext_resource type="Script" path="res://scenes/figures/figure.gd" id="1_4xw1m"]
+[ext_resource type="PackedScene" uid="uid://c348tjjdlgp6p" path="res://scenes/figures/base_square.tscn" id="2_mcnkx"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ufepp"]
+size = Vector2(30.5, 62)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pq8og"]
+size = Vector2(30.7969, 30)
+
+[node name="Triangle" type="CharacterBody2D"]
+script = ExtResource("1_4xw1m")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(-32, -32, -32, 32, 32, 32, 32, 0, 0, 0, 0, -32)
+
+[node name="1" parent="." instance=ExtResource("2_mcnkx")]
+position = Vector2(-16, -16)
+
+[node name="2" parent="." instance=ExtResource("2_mcnkx")]
+position = Vector2(-16, 16)
+
+[node name="3" parent="." instance=ExtResource("2_mcnkx")]
+position = Vector2(16, 16)
+
+[node name="Area2D" type="Area2D" parent="."]
+rotation = 1.5708
+
+[node name="c3" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(-15, 5.42999e-05)
+shape = SubResource("RectangleShape2D_ufepp")
+
+[node name="c4" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(15.6016, 15.9999)
+shape = SubResource("RectangleShape2D_pq8og")
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
+[connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]

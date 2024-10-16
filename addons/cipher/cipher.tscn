@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://ghcijjfsrhbj"]
+
+[ext_resource type="Script" path="res://addons/cipher/cipher.gd" id="1_ca4u0"]
+
+[node name="Cipher" type="Node"]
+script = ExtResource("1_ca4u0")

@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://c5y5rr3jby0gq"]
+
+[ext_resource type="PackedScene" uid="uid://ditsciej0wcxg" path="res://scenes/figures/line.tscn" id="1_g8qdn"]
+[ext_resource type="Script" path="res://scenes/easter_egg.gd" id="1_unnn6"]
+[ext_resource type="PackedScene" uid="uid://dk4ono3nm5530" path="res://scenes/figures/square.tscn" id="2_2bg6f"]
+
+[node name="EasterEgg" type="Node2D"]
+script = ExtResource("1_unnn6")
+
+[node name="Line" parent="." instance=ExtResource("1_g8qdn")]
+visible = false
+position = Vector2(544, 480)
+texture = "res://assets/ui/buttons/menu/cell/2.png"
+
+[node name="Square" parent="." instance=ExtResource("2_2bg6f")]
+visible = false
+position = Vector2(544, 128)
+texture = "res://assets/ui/buttons/menu/cell/3.png"

@@ -1,0 +1,341 @@
+[gd_scene load_steps=6 format=3 uid="uid://mrmp0b477l1l"]
+
+[ext_resource type="Script" path="res://scenes/lobby.gd" id="1_0jril"]
+[ext_resource type="PackedScene" uid="uid://clhq1x5emj21" path="res://scenes/access_buttons.tscn" id="2_i384l"]
+[ext_resource type="Texture2D" uid="uid://b4w2hcmmbapmc" path="res://assets/ui/buttons/menu/admin.png" id="3_5yqdd"]
+[ext_resource type="SpriteFrames" uid="uid://bc7ulrbhko5e3" path="res://assets/ui/buttons/menu/waiting/waiting_animation.tres" id="4_b4xgj"]
+[ext_resource type="PackedScene" uid="uid://c5y5rr3jby0gq" path="res://scenes/easter_egg.tscn" id="5_8twxl"]
+
+[node name="Lobby" type="Node2D"]
+script = ExtResource("1_0jril")
+
+[node name="color" type="Node2D" parent="."]
+
+[node name="bg" type="ColorRect" parent="color"]
+offset_right = 1152.0
+offset_bottom = 448.0
+color = Color(0.486275, 0.486275, 0.486275, 1)
+
+[node name="bg2" type="ColorRect" parent="color"]
+offset_left = 24.0
+offset_top = 16.0
+offset_right = 440.0
+offset_bottom = 432.0
+color = Color(0.337255, 0.337255, 0.337255, 1)
+
+[node name="bg_chat" type="ColorRect" parent="color"]
+offset_left = 640.0
+offset_top = 16.0
+offset_right = 1128.0
+offset_bottom = 424.0
+color = Color(0.266667, 0.266667, 0.266667, 1)
+
+[node name="lines" type="Node2D" parent="color"]
+
+[node name="line1" type="ColorRect" parent="color/lines"]
+offset_left = 24.0
+offset_top = 88.0
+offset_right = 440.0
+offset_bottom = 96.0
+color = Color(0.486275, 0.486275, 0.486275, 1)
+
+[node name="line2" type="ColorRect" parent="color/lines"]
+offset_left = 24.0
+offset_top = 176.0
+offset_right = 440.0
+offset_bottom = 184.0
+color = Color(0.486275, 0.486275, 0.486275, 1)
+
+[node name="line3" type="ColorRect" parent="color/lines"]
+offset_left = 24.0
+offset_top = 256.0
+offset_right = 440.0
+offset_bottom = 264.0
+color = Color(0.486275, 0.486275, 0.486275, 1)
+
+[node name="line4" type="ColorRect" parent="color/lines"]
+offset_left = 24.0
+offset_top = 344.0
+offset_right = 440.0
+offset_bottom = 352.0
+color = Color(0.486275, 0.486275, 0.486275, 1)
+
+[node name="list_players" type="Node2D" parent="."]
+
+[node name="p1" type="Label" parent="list_players"]
+visible = false
+offset_left = 56.0
+offset_top = 24.0
+offset_right = 320.0
+offset_bottom = 87.0
+theme_override_font_sizes/font_size = 35
+clip_text = true
+
+[node name="p2" type="Label" parent="list_players"]
+visible = false
+offset_left = 56.0
+offset_top = 112.0
+offset_right = 320.0
+offset_bottom = 175.0
+theme_override_font_sizes/font_size = 35
+clip_text = true
+
+[node name="p3" type="Label" parent="list_players"]
+visible = false
+offset_left = 56.0
+offset_top = 192.0
+offset_right = 320.0
+offset_bottom = 255.0
+theme_override_font_sizes/font_size = 35
+clip_text = true
+
+[node name="p4" type="Label" parent="list_players"]
+visible = false
+offset_left = 56.0
+offset_top = 280.0
+offset_right = 320.0
+offset_bottom = 343.0
+theme_override_font_sizes/font_size = 35
+clip_text = true
+
+[node name="p5" type="Label" parent="list_players"]
+visible = false
+offset_left = 56.0
+offset_top = 368.0
+offset_right = 320.0
+offset_bottom = 431.0
+theme_override_font_sizes/font_size = 35
+clip_text = true
+
+[node name="chat" type="Node2D" parent="."]
+position = Vector2(640, 16)
+
+[node name="ScrollContainer" type="ScrollContainer" parent="chat"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 480.0
+offset_bottom = 352.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="chat/ScrollContainer"]
+layout_mode = 2
+
+[node name="input" type="LineEdit" parent="chat"]
+offset_left = 8.0
+offset_top = 360.0
+offset_right = 480.0
+offset_bottom = 403.0
+theme_override_font_sizes/font_size = 25
+placeholder_text = "Enter text..."
+
+[node name="back" type="Node2D" parent="."]
+
+[node name="dialog_back" type="ConfirmationDialog" parent="back"]
+initial_position = 2
+size = Vector2i(306, 106)
+dialog_text = "Do you want to return in menu 
+and delete this lobby?
+"
+
+[node name="kick" type="ConfirmationDialog" parent="back"]
+initial_position = 2
+size = Vector2i(306, 106)
+dialog_text = "Do you want to kick
+''?
+"
+
+[node name="ban" type="ConfirmationDialog" parent="back"]
+initial_position = 2
+size = Vector2i(306, 106)
+dialog_text = "Do you want to ban
+''?
+This player will  never be able to join your server.
+"
+
+[node name="set_owner" type="ConfirmationDialog" parent="back"]
+initial_position = 3
+size = Vector2i(306, 106)
+current_screen = 0
+dialog_text = "Do you want to give owner
+''?
+This player will  be owner but you will never be able to be owner.
+"
+
+[node name="one_player" type="ConfirmationDialog" parent="back"]
+initial_position = 2
+dialog_text = "Do you want start a game?
+
+It's more fun with friends!"
+
+[node name="back" type="Button" parent="back"]
+offset_left = 1056.0
+offset_top = 584.0
+offset_right = 1130.0
+offset_bottom = 627.0
+theme_override_font_sizes/font_size = 25
+text = "BACK"
+
+[node name="nickname" type="Label" parent="back"]
+offset_left = 440.0
+offset_right = 640.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 25
+text = "NICKNAME"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="count_players" type="Node2D" parent="."]
+
+[node name="server" type="Node2D" parent="count_players"]
+
+[node name="HSlider" type="HSlider" parent="count_players/server"]
+offset_left = 768.0
+offset_top = 504.0
+offset_right = 952.0
+offset_bottom = 560.0
+min_value = 1.0
+max_value = 5.0
+value = 1.0
+
+[node name="Label" type="Label" parent="count_players/server"]
+offset_left = 752.0
+offset_top = 488.0
+offset_right = 923.0
+offset_bottom = 511.0
+text = "COUNT MAX PLAYERS:"
+
+[node name="count" type="Label" parent="count_players/server"]
+offset_left = 936.0
+offset_top = 488.0
+offset_right = 976.0
+offset_bottom = 511.0
+
+[node name="access_players" type="Node2D" parent="."]
+
+[node name="1" parent="access_players" instance=ExtResource("2_i384l")]
+visible = false
+position = Vector2(448, 32)
+
+[node name="2" parent="access_players" instance=ExtResource("2_i384l")]
+visible = false
+position = Vector2(448, 104)
+ID = 1
+
+[node name="3" parent="access_players" instance=ExtResource("2_i384l")]
+visible = false
+position = Vector2(448, 192)
+ID = 2
+
+[node name="4" parent="access_players" instance=ExtResource("2_i384l")]
+visible = false
+position = Vector2(448, 272)
+ID = 3
+
+[node name="5" parent="access_players" instance=ExtResource("2_i384l")]
+visible = false
+position = Vector2(448, 360)
+ID = 4
+
+[node name="start_buttons" type="Node2D" parent="."]
+
+[node name="ready" type="Button" parent="start_buttons"]
+offset_left = 72.0
+offset_top = 512.0
+offset_right = 224.0
+offset_bottom = 583.0
+theme_override_font_sizes/font_size = 45
+text = "READY"
+
+[node name="start" type="Button" parent="start_buttons"]
+offset_left = 72.0
+offset_top = 512.0
+offset_right = 224.0
+offset_bottom = 583.0
+theme_override_font_sizes/font_size = 45
+text = "START"
+
+[node name="not_all_ready" type="ConfirmationDialog" parent="start_buttons"]
+initial_position = 2
+size = Vector2i(363, 100)
+dialog_text = "Have some players who didn't press \"READY\""
+
+[node name="players_status" type="Node2D" parent="."]
+
+[node name="1" type="Sprite2D" parent="players_status"]
+visible = false
+position = Vector2(408, 56)
+texture = ExtResource("3_5yqdd")
+
+[node name="2" type="Sprite2D" parent="players_status"]
+visible = false
+position = Vector2(408, 136)
+texture = ExtResource("3_5yqdd")
+
+[node name="3" type="Sprite2D" parent="players_status"]
+visible = false
+position = Vector2(408, 224)
+texture = ExtResource("3_5yqdd")
+
+[node name="4" type="Sprite2D" parent="players_status"]
+visible = false
+position = Vector2(408, 304)
+texture = ExtResource("3_5yqdd")
+
+[node name="5" type="Sprite2D" parent="players_status"]
+visible = false
+position = Vector2(408, 392)
+texture = ExtResource("3_5yqdd")
+
+[node name="a1" type="AnimatedSprite2D" parent="players_status"]
+visible = false
+position = Vector2(408, 56)
+sprite_frames = ExtResource("4_b4xgj")
+autoplay = "default"
+
+[node name="a2" type="AnimatedSprite2D" parent="players_status"]
+visible = false
+position = Vector2(408, 136)
+sprite_frames = ExtResource("4_b4xgj")
+autoplay = "default"
+
+[node name="a3" type="AnimatedSprite2D" parent="players_status"]
+visible = false
+position = Vector2(408, 224)
+sprite_frames = ExtResource("4_b4xgj")
+autoplay = "default"
+
+[node name="a4" type="AnimatedSprite2D" parent="players_status"]
+visible = false
+position = Vector2(408, 304)
+sprite_frames = ExtResource("4_b4xgj")
+autoplay = "default"
+
+[node name="a5" type="AnimatedSprite2D" parent="players_status"]
+visible = false
+position = Vector2(408, 392)
+sprite_frames = ExtResource("4_b4xgj")
+autoplay = "default"
+
+[node name="EasterEgg" parent="." instance=ExtResource("5_8twxl")]
+
+[connection signal="text_submitted" from="chat/input" to="." method="_on_input_text_submitted"]
+[connection signal="canceled" from="back/dialog_back" to="." method="_on_confirmation_dialog_canceled"]
+[connection signal="confirmed" from="back/dialog_back" to="." method="_on_confirmation_dialog_confirmed"]
+[connection signal="canceled" from="back/kick" to="." method="_on_kick_canceled"]
+[connection signal="confirmed" from="back/kick" to="." method="_on_kick_confirmed"]
+[connection signal="canceled" from="back/ban" to="." method="_on_ban_canceled"]
+[connection signal="confirmed" from="back/ban" to="." method="_on_ban_confirmed"]
+[connection signal="canceled" from="back/set_owner" to="." method="_on_set_owner_canceled"]
+[connection signal="confirmed" from="back/set_owner" to="." method="_on_set_owner_confirmed"]
+[connection signal="canceled" from="back/one_player" to="." method="_on_one_player_canceled"]
+[connection signal="confirmed" from="back/one_player" to="." method="_on_one_player_confirmed"]
+[connection signal="button_up" from="back/back" to="." method="_on_back_button_up"]
+[connection signal="value_changed" from="count_players/server/HSlider" to="." method="_on_h_slider_drag_ended"]
+[connection signal="pressed" from="access_players/1" to="." method="_on_access_buttons_pressed"]
+[connection signal="pressed" from="access_players/2" to="." method="_on_access_buttons_pressed"]
+[connection signal="pressed" from="access_players/3" to="." method="_on_access_buttons_pressed"]
+[connection signal="pressed" from="access_players/4" to="." method="_on_access_buttons_pressed"]
+[connection signal="pressed" from="access_players/5" to="." method="_on_access_buttons_pressed"]
+[connection signal="pressed" from="start_buttons/ready" to="." method="_on_ready_pressed"]
+[connection signal="pressed" from="start_buttons/start" to="." method="_on_start_pressed"]
+[connection signal="canceled" from="start_buttons/not_all_ready" to="." method="_on_not_all_ready_canceled"]
+[connection signal="confirmed" from="start_buttons/not_all_ready" to="." method="_on_not_all_ready_confirmed"]

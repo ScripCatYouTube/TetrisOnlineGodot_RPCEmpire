@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://c348tjjdlgp6p"]
+
+[ext_resource type="Texture2D" uid="uid://s5oudbjbhpsl" path="res://assets/ui/buttons/menu/cell/base.png" id="1_w1xv4"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5x3j0"]
+size = Vector2(30, 30)
+
+[node name="BaseSquare" type="RigidBody2D"]
+mass = 0.01
+
+[node name="sprite" type="Sprite2D" parent="."]
+texture = ExtResource("1_w1xv4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+scale = Vector2(1.05, 1.05)
+shape = SubResource("RectangleShape2D_5x3j0")

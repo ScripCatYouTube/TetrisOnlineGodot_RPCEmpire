@@ -1,0 +1,55 @@
+[gd_resource type="TileSet" load_steps=11 format=3 uid="uid://dwe72jq3uob5w"]
+
+[ext_resource type="Texture2D" uid="uid://xmocvkhs5qem" path="res://assets/ui/buttons/menu/cell/1.png" id="1_r3opw"]
+[ext_resource type="Texture2D" uid="uid://g62t4ofrw71h" path="res://assets/ui/buttons/menu/cell/2.png" id="2_6jg5k"]
+[ext_resource type="Texture2D" uid="uid://djtuu44i2x377" path="res://assets/ui/buttons/menu/cell/3.png" id="3_05ifq"]
+[ext_resource type="Texture2D" uid="uid://by36rgep28q06" path="res://assets/ui/buttons/menu/cell/4.png" id="4_u40if"]
+[ext_resource type="Texture2D" uid="uid://byf2vi7nkrjmb" path="res://assets/ui/buttons/menu/cell/5.png" id="5_tshgo"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_55eg5"]
+texture = ExtResource("1_r3opw")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
+0:0/0/physics_layer_0/angular_velocity = 0.0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_amx80"]
+texture = ExtResource("2_6jg5k")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
+0:0/0/physics_layer_0/angular_velocity = 0.0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kq33k"]
+texture = ExtResource("3_05ifq")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
+0:0/0/physics_layer_0/angular_velocity = 0.0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4s1ln"]
+texture = ExtResource("4_u40if")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
+0:0/0/physics_layer_0/angular_velocity = 0.0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2jqva"]
+texture = ExtResource("5_tshgo")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
+0:0/0/physics_layer_0/angular_velocity = 0.0
+
+[resource]
+tile_size = Vector2i(32, 32)
+physics_layer_0/collision_layer = 1
+terrain_set_0/mode = 0
+navigation_layer_0/layers = 1
+custom_data_layer_0/name = ""
+custom_data_layer_0/type = 0
+sources/0 = SubResource("TileSetAtlasSource_55eg5")
+sources/1 = SubResource("TileSetAtlasSource_amx80")
+sources/2 = SubResource("TileSetAtlasSource_kq33k")
+sources/3 = SubResource("TileSetAtlasSource_4s1ln")
+sources/4 = SubResource("TileSetAtlasSource_2jqva")
