@@ -77,8 +77,8 @@ func add_previously_connected_players(names):
 	print('Peers: ' + str(names))
 	if names['admin'] != null: add_player(names['admin'], true)
 	
-	for name in names['players']:
-		add_player(name)
+	for _name in names['players']:
+		add_player(_name)
 
 @rpc 
 func add_new_message(text, user):
@@ -98,7 +98,7 @@ func change_ready(nickname):
 @rpc
 func press_start():
 	get_local_names()
-	await get_tree().create_timer(1)
+	await get_tree().create_timer(0.4).timeout
 	get_tree().change_scene_to_file("res://scenes/game.tscn")	
 	
 
@@ -175,8 +175,9 @@ func _on_input_text_submitted(new_text):
 	print('texted')
 
 
-func _on_h_slider_drag_ended(value_changed):
-	rpc('change_max_players', $count_players/server/HSlider.value)
+func _on_h_slider_drag_ended(_value_changed):
+	if multiplayer.is_server():
+		rpc('change_max_players', $count_players/server/HSlider.value)
 
 
 func delete_player(nickname):
@@ -243,7 +244,7 @@ func server_chat_from_user(text):
 	rpc('add_new_message', text, user)	
 
 
-@rpc("authority", "call_local", 'reliable')
+@rpc("authority", 'reliable')
 func change_max_players(count):
 	max_players = count
 	$count_players/server/count.text = str(count)
@@ -265,7 +266,7 @@ func pressed_start():
 	get_tree().change_scene_to_file("res://scenes/game.tscn")
 	
 
-func _on_access_buttons_pressed(name, id):
+func _on_access_buttons_pressed(_name, id):
 	var nickname = $'list_players'.get_children()[id]
 	var access = $'access_players'.get_children()[id]
 	choosed_player = null
@@ -340,7 +341,7 @@ func _on_set_owner_confirmed():
 func _on_ready_pressed():
 	rpc('pressed_ready')
 	
-	await get_tree().create_timer(1)
+	await get_tree().create_timer(1).timeout
 	get_local_names()
 	
 	var ii = 1
@@ -357,7 +358,6 @@ func _on_ready_pressed():
 
 
 func _on_start_pressed():
-	var is_ready = true
 	var ii = 1
 
 	if len(Net.players) == 1:

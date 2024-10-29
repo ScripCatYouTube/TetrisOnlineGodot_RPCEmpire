@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://bfr2es7lli3g1"]
+
+[ext_resource type="Texture2D" uid="uid://cbxx3d46t4c7b" path="res://assets/ui/buttons/menu/cell/tileset.png" id="1_gatxi"]
+[ext_resource type="Script" path="res://scenes/Map.gd" id="2_pypvr"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4n0v7"]
+texture = ExtResource("1_gatxi")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+1:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_34cvr"]
+tile_size = Vector2i(32, 32)
+sources/1 = SubResource("TileSetAtlasSource_4n0v7")
+
+[node name="Map" type="TileMap"]
+tile_set = SubResource("TileSet_34cvr")
+format = 2
+script = ExtResource("2_pypvr")

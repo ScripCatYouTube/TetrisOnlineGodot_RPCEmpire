@@ -1,44 +1,7 @@
-[gd_scene load_steps=15 format=3 uid="uid://bq3ph8aw40wqb"]
+[gd_scene load_steps=5 format=3 uid="uid://bq3ph8aw40wqb"]
 
 [ext_resource type="Script" path="res://scenes/game.gd" id="1_li6uo"]
-[ext_resource type="Texture2D" uid="uid://xmocvkhs5qem" path="res://assets/ui/buttons/menu/cell/1.png" id="2_xi5y7"]
-[ext_resource type="Texture2D" uid="uid://g62t4ofrw71h" path="res://assets/ui/buttons/menu/cell/2.png" id="3_iq4iy"]
-[ext_resource type="Texture2D" uid="uid://djtuu44i2x377" path="res://assets/ui/buttons/menu/cell/3.png" id="4_8al7r"]
-[ext_resource type="Texture2D" uid="uid://by36rgep28q06" path="res://assets/ui/buttons/menu/cell/4.png" id="5_3uwk6"]
-[ext_resource type="Texture2D" uid="uid://byf2vi7nkrjmb" path="res://assets/ui/buttons/menu/cell/5.png" id="6_ie367"]
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_55eg5"]
-texture = ExtResource("2_xi5y7")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_amx80"]
-texture = ExtResource("3_iq4iy")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kq33k"]
-texture = ExtResource("4_8al7r")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4s1ln"]
-texture = ExtResource("5_3uwk6")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2jqva"]
-texture = ExtResource("6_ie367")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
-
-[sub_resource type="TileSet" id="TileSet_0n6ee"]
-tile_size = Vector2i(32, 32)
-sources/0 = SubResource("TileSetAtlasSource_55eg5")
-sources/1 = SubResource("TileSetAtlasSource_amx80")
-sources/2 = SubResource("TileSetAtlasSource_kq33k")
-sources/3 = SubResource("TileSetAtlasSource_4s1ln")
-sources/4 = SubResource("TileSetAtlasSource_2jqva")
+[ext_resource type="PackedScene" uid="uid://bfr2es7lli3g1" path="res://scenes/Map.tscn" id="2_7lu6l"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y2nl5"]
 size = Vector2(1152, 18)
@@ -169,10 +132,8 @@ dialog_text = "Do you want to leave?"
 
 [node name="figures" type="Node2D" parent="."]
 
-[node name="TileMap" type="TileMap" parent="figures"]
-tile_set = SubResource("TileSet_0n6ee")
-rendering_quadrant_size = 32
-format = 2
+[node name="Map" parent="figures" instance=ExtResource("2_7lu6l")]
+is_main = true
 
 [node name="borders" type="Node2D" parent="."]
 
@@ -201,6 +162,28 @@ position = Vector2(1168, 8)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="borders/right"]
 position = Vector2(-8, 314)
 shape = SubResource("RectangleShape2D_ltku8")
+
+[node name="events" type="Node2D" parent="."]
+
+[node name="pos" type="Marker2D" parent="events"]
+position = Vector2(576, 320)
+
+[node name="positions_figures" type="Node2D" parent="."]
+
+[node name="0" type="Marker2D" parent="positions_figures"]
+position = Vector2(96, 64)
+
+[node name="1" type="Marker2D" parent="positions_figures"]
+position = Vector2(288, 64)
+
+[node name="2" type="Marker2D" parent="positions_figures"]
+position = Vector2(576, 64)
+
+[node name="3" type="Marker2D" parent="positions_figures"]
+position = Vector2(832, 64)
+
+[node name="4" type="Marker2D" parent="positions_figures"]
+position = Vector2(1024, 64)
 
 [connection signal="button_down" from="back_menu/back" to="." method="_on_back_button_down"]
 [connection signal="canceled" from="back_menu/back_dialog" to="." method="_on_back_dialog_canceled"]

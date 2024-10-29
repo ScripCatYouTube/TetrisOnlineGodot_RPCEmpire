@@ -4,7 +4,7 @@ extends Node
 func create_file(filename: String):
 	var is_exit = FileAccess.file_exists(filename)
 	if is_exit == false:
-		var file = FileAccess.open(filename, FileAccess.WRITE)
+		var _file = FileAccess.open(filename, FileAccess.WRITE)
 	
 	return is_exit
 

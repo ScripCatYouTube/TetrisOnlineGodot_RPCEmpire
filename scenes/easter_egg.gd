@@ -3,7 +3,7 @@ extends Node2D
 var inputed = false
 @onready var player_figure = $Square
 
-func _input(event):
+func _input(_event):
 	if Input.is_action_just_pressed('ui_right'):
 		if turn_on(): return
 		player_figure.move_right()

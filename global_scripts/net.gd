@@ -16,17 +16,18 @@ func get_players_names():
 	return names_players
 
 
-func remove_player(nickname: String):
+func remove_player(_nickname: String):
 	for i in Net.players:
-		if Net.players[i]['nickname'] == nickname:
+		if Net.players[i]['nickname'] == _nickname:
 			Net.players.erase(i)
 
 
 func kick(peer: int, reason: String = 'Reason'):
-	print(2)
-	rpc_id(peer, 'self_kick', reason)
+	if multiplayer.is_server():
+		print(2)
+		rpc_id(peer, 'self_kick', reason)
 	
-	await _kick(peer)
+		await _kick(peer)
 
 func _kick(peer):
 	await get_tree().create_timer(0.1).timeout

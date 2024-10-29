@@ -2,13 +2,16 @@ extends TileMap
 
 # RPC calling functions
 #
-# 'update_cell', tile, pos (tile - -1: clear, another: team_color)
+# 'update_cell', tile, pos (tile = -1: clear or tile != -1 set tile, another: team_color)
 # 'clear_line', percents_teams, y
 #   (percents_teams - dictionary of teams and theirs 
 #   contribution in cleared line, if team not have anyone figure in cleared line, 
 #   then don't included in dictionary
 #   y - y axis position)
 # 'team_loose', team
+# 'after_update_add_object', team
+#
+
 
 
 var types = ['square', 'triangle', 'gamma', 'gamma_reversed', 'line']
@@ -68,11 +71,14 @@ var rects = {
 
 
 var markers = {} # team: [rotate, type, position]
+var old_markers = {} # {team: {position: [type, rotate]}}
 
+@export_category("Tests")
 @export var is_main = false
 @export var is_test_one_object = false
 @export var is_test = false
 @export var is_rpc_test = false
+
 
 func _ready():
 	if is_rpc_test: rpc_test()
@@ -172,25 +178,26 @@ func update(team, next_pos = null, next_degrees = null):
 func move(team: int, direction: Vector2):
 	#clear_layer(1)
 	#clear_layer(2)
-	var collide = rect_check_collide(team, direction, markers[team][0])
-	#print(get_vector_side(direction), direction, collide)
-	#print('Collides move ', collide[0], ' ', collide[1],  ' ', get_rotated_sides(markers[team][0])[1])
-	if collide['down'] == true:
-		update_object(team)
-		return
-	
-	if collide[get_vector_side(direction)] == true:
-		return
-	#check_under_line(team)
-	
-	update(team, markers[team][2] + direction, null)
-	#rect_draw(team)
-	
-	
-	if collide['down'] == true:
-		#print(2)
-		update_object(team)
-		return
+	if markers.has(team):
+		var collide = rect_check_collide(team, direction, markers[team][0])
+		#print(get_vector_side(direction), direction, collide)
+		#print('Collides move ', collide[0], ' ', collide[1],  ' ', get_rotated_sides(markers[team][0])[1])
+		if collide['down'] == true:
+			update_object(team)
+			return
+		
+		if collide[get_vector_side(direction)] == true:
+			return
+		#check_under_line(team)
+		
+		update(team, markers[team][2] + direction, null)
+		#rect_draw(team)
+		
+		
+		if collide['down'] == true:
+			#print(2)
+			update_object(team)
+			return
 
 
 func m_down(team: int):
@@ -368,8 +375,9 @@ func _cell(pos, tile):
 	else:
 		set_cell(0, pos, 1, tile)
 		
-	if multiplayer.multiplayer_peer.get_class() == 'ENetMultiplayerPeer':
-		rpc('update_cell', tile, pos)
+	if multiplayer.multiplayer_peer.get_class() == 'ENetMultiplayerPeer' and multiplayer.is_server():
+		get_parent().get_parent().rpc('update_cell', tile, pos)
+		#get_parent().get_parent().rpc('u')
 
 func cell(pos, team):
 	_cell(pos, colors[team])
@@ -552,16 +560,16 @@ func is_collide_matrix(matrix_collide: Dictionary):
 
 func get_vector_side(vector: Vector2):
 	var side = null
-	if vector == Vector2(0, -1):
+	if vector == Vector2.UP:
 		side = 'up'
 	
-	elif vector == Vector2(0, 1):
+	elif vector == Vector2.DOWN:
 		side = 'down'
 	
-	elif vector == Vector2(1, 0):
+	elif vector == Vector2.RIGHT:
 		side = 'right'
 
-	elif vector == Vector2(-1, 0):
+	elif vector == Vector2.LEFT:
 		side = 'left'
 	
 	return side
@@ -582,21 +590,27 @@ func check_under_line(team: int):
 
 
 func update_object(team: int):
+	old_markers[team] = {markers[team][2]: [markers[team][1], markers[team][0]]}
 	markers.erase(team)
 	
-	await get_tree().create_timer(0.5).timeout
+	#await get_tree().create_timer(0.5).timeout
 	
-	add_object(get_random_figure(), Vector2(1,1), team)
+	#add_object(get_random_figure(), Vector2(1,1), team)
+	if multiplayer.multiplayer_peer.get_class() == 'ENetMultiplayerPeer' and multiplayer.is_server():
+		get_parent().get_parent().rpc('after_update_add_object', team)
 	
-	var collide = rect_check_collide(team, Vector2(-1, -1), markers[team][0] + 90)
-	#print(collide)
-	if collide['down']:
-		print('u lose :(, '+ str(team))
-		_clear(markers[team][1], markers[team][2], team, markers[team][0])
-		markers.erase(team)
-		
-		if multiplayer.multiplayer_peer.get_class() == 'ENetMultiplayerPeer':
-			rpc('team_loose', team)
+	await get_tree().create_timer(0.4).timeout
+	
+	if markers.has(team):
+		var collide = rect_check_collide(team, Vector2(-1, -1), markers[team][0] + 90)
+		#print(collide)
+		if collide['down']:
+			print('u lose :(, '+ str(team))
+			_clear(markers[team][1], markers[team][2], team, markers[team][0])
+			markers.erase(team)
+			
+			if multiplayer.multiplayer_peer.get_class() == 'ENetMultiplayerPeer':
+				get_parent().get_parent().rpc('team_loose', team)
 
 
 func update_line(cords: Vector2i = Vector2i(26, 0)): # max x = 20, y = 26
@@ -626,7 +640,7 @@ func update_line(cords: Vector2i = Vector2i(26, 0)): # max x = 20, y = 26
 		ccell(Vector2(i, cords.y))
 	
 	if multiplayer.multiplayer_peer.get_class() == 'ENetMultiplayerPeer':
-		rpc('clear_line', get_percents_teams_contribution(contribution_teams), cords.y)
+		get_parent().get_parent().rpc('clear_line', get_percents_teams_contribution(contribution_teams), cords.y)
 
 
 func clear_lines(cords: Vector2i = Vector2i(34, 20)):
@@ -668,10 +682,16 @@ func sum_reduce(accum: int, element: int) -> int:
 	return accum + element
 
 
-@rpc('call_local')
+"""
+@rpc('any_peer')
 func update_cell(tile, pos):
+	if typeof(tile) == 2:
+		erase_cell(0, pos)
+	else:
+		set_cell(0, pos, 1, tile)
 	if is_rpc_test: print('Cell ' + str(tile) + ' on position ' + str(pos))
-
+	if is_main: 
+	
 @rpc('call_local')
 func clear_line(percents_teams, y):
 	if is_rpc_test: print('Cleared line on ' + str(y) + ' contribution teams: ' + str(percents_teams))
@@ -679,3 +699,7 @@ func clear_line(percents_teams, y):
 @rpc('call_local')
 func team_loose(team):
 	if is_rpc_test: print('Eliminated team ' + str(team))
+
+@rpc('call_local')
+func after_update_add_object(team):
+	print(2)"""

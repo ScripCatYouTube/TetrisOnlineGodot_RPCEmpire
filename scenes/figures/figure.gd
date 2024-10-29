@@ -27,15 +27,15 @@ func _process(_delta):
 #	state.set_transform(xform)(
 
 
-func load_textures(texture):
-	var loaded_texture = load(texture)
+func load_textures(_texture):
+	var loaded_texture = load(_texture)
 	for i in get_children():
 		if i.get_class() == 'RigidBody2D':
 			i.get_node('sprite').texture = loaded_texture
 
 
-func is_loaded(texture):
-	var loaded_texture = load(texture)
+func is_loaded(_texture):
+	var loaded_texture = load(_texture)
 	for i in get_children():
 		if i.get_class() == 'RigidBody2D':
 			if i.get_node('sprite').texture != loaded_texture:

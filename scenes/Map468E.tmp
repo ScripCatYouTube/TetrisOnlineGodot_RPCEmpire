@@ -30,7 +30,3 @@ layer_0/tile_data = PackedInt32Array(1310720, 65537, 2, 1310721, 65537, 2, 13107
 layer_1/tile_data = PackedInt32Array()
 layer_2/tile_data = PackedInt32Array()
 script = ExtResource("2_pypvr")
-
-[node name="Timer" type="Timer" parent="."]
-
-[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
