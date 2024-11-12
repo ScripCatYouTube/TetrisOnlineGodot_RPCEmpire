@@ -20,58 +20,58 @@ var colors = [Vector2i(0,0), Vector2i(0,1), Vector2i(1,0), Vector2i(1,1), Vector
 var back_colors = [Vector2i(2, 0), Vector2i(2, 1), Vector2i(3, 0), Vector2i(3, 1), Vector2i(2, 2), Vector2i(3,2)]
 
 var figures = {
-	'square': [Vector2(0, 0), Vector2(0,1), Vector2(1,0), Vector2(1,1)],
-	'gamma': [Vector2(1,0), Vector2(0,0), Vector2(0,1), Vector2(2,0)],
-	'gamma_reversed': [Vector2(0,0), Vector2(1,0), Vector2(2,0), Vector2(2, 1)],
-	'triangle': [Vector2(1,0), Vector2(0,0), Vector2(2,0), Vector2(1, 1)],
-	'line': [Vector2(0, 0), Vector2(0,1), Vector2(0,2), Vector2(0,3)]
+	'square': [Vector2(-1, -1), Vector2(-1, 0), Vector2(0, -1), Vector2(0, 0)],
+	'gamma': [Vector2(0, -1), Vector2(-1, -1), Vector2(-1, 0), Vector2(1, -1)],
+	'gamma_reversed': [Vector2(-1, -1), Vector2(0, -1), Vector2(1, -1), Vector2(1, 0)],
+	'triangle': [Vector2(0, -1), Vector2(-1, -1), Vector2(1, -1), Vector2(0, 0)],
+	'line': [Vector2(0, -2), Vector2(0, -1), Vector2(0, 0), Vector2(0, 1)]
 }
 
 var rects = {
 	'square': 
-		{
-			'up': [Vector2(0, -1), Vector2(1, -1)], 
-			'left': [Vector2(-1, 0), Vector2(-1, 1)], 
-			'right': [Vector2(2, 0), Vector2(2, 1)], 
-			'down': [Vector2(0, 2), Vector2(1,2)]
+		{ 
+			"up": [Vector2(-1, -2), Vector2(0, -2)], 
+			"left": [Vector2(-2, -1), Vector2(-2, 0)], 
+			"right": [Vector2(1, -1), Vector2(1, 0)], 
+			"down": [Vector2(-1, 1), Vector2(0, 1)] 
 		},
 		
-	'gamma': 
-		{
-			'up': [Vector2(0, -1), Vector2(1, -1), Vector2(2, -1)],
-			'left': [Vector2(-1, 0), Vector2(-1, 1)],
-			'right': [Vector2(3, 0), Vector2(1, 1)],
-			'down': [Vector2(0, 2), Vector2(1, 1), Vector2(2, 1)]	
+	 'gamma': 
+		{ 
+			"up": [Vector2(-1, -2), Vector2(0, -2), Vector2(1, -2)], 
+			"left": [Vector2(-2, -1), Vector2(-2, 0)], 
+			"right": [Vector2(2, -1), Vector2(0, 0)], 
+			"down": [Vector2(-1, 1), Vector2(0, 0), Vector2(1, 0)] 
 		},
 		
 	'gamma_reversed':
 		{
-			'up': [Vector2(0, -1), Vector2(1, -1), Vector2(2, -1)],
-			'left': [Vector2(-1, 0), Vector2(1, 1)],
-			'right': [Vector2(3, 0), Vector2(3, 1)],
-			'down': [Vector2(0, 1), Vector2(2, 2), Vector2(1, 1)]
+			'up': [Vector2(-1, -2), Vector2(0, -2), Vector2(1, -2)],
+			'left': [Vector2(-2, -1), Vector2(0, 0)],
+			'right': [Vector2(2, -1), Vector2(2, 0)],
+			'down': [Vector2(-1, 0), Vector2(1, 1), Vector2(0, 0)]
 		},
 		
 	'triangle':
-		{
-			'up': [Vector2(0, -1), Vector2(1, -1), Vector2(2, -1)],#[Vector2(0, -1), Vector2(1, -1), Vector2(2, -1)],
-			'left': [Vector2(-1,0), Vector2(0, 1)],
-			'right': [Vector2(3, 0), Vector2(2, 1)],
-			'down': [Vector2(0, 1), Vector2(1, 2), Vector2(2, 1)]
+		{ 
+			"up": [Vector2(-1, -2), Vector2(0, -2), Vector2(1, -2)], 
+			"left": [Vector2(-1, 0), Vector2(-2, -1)], 
+			"right": [Vector2(1, 0), Vector2(2, -1)], 
+			"down": [Vector2(-1, 0), Vector2(0, 1), Vector2(1, 0)] 
 		},
 
 	'line':
-		{
-			'up': [Vector2(0, -1)],
-			'left': [Vector2(-1, 0), Vector2(-1, 1), Vector2(-1, 2), Vector2(-1, 3)],
-			'right': [Vector2(1, 0), Vector2(1, 1), Vector2(1, 2), Vector2(1, 3)],
-			'down': [Vector2(0, 4)]
-		},
+		{ 
+			"up": [Vector2(0, -3)], 
+			"left": [Vector2(-1, -2), Vector2(-1, -1), Vector2(-1, 0), Vector2(-1, 1)], 
+			"right": [Vector2(1, -2), Vector2(1, -1), Vector2(1, 0), Vector2(1, 1)], 
+			"down": [Vector2(0, 2)] 
+		}
 }
 
 
 var markers = {} # team: [rotate, type, position]
-var old_markers = {} # {team: {position: [type, rotate]}}
+var old_markers = {} # {position: [rotate, figure, team]}
 
 @export_category("Tests")
 @export var is_main = false
@@ -81,6 +81,9 @@ var old_markers = {} # {team: {position: [type, rotate]}}
 
 
 func _ready():
+	#generate_figures_and_rect()
+	#print(get_modified_figure(__rotate('gamma', 90)))
+	
 	if is_rpc_test: rpc_test()
 	if is_main or is_test_one_object: $Timer.start(1)
 	# test function for testing functions :)
@@ -134,8 +137,10 @@ func rpc_test():
 	multiplayer.multiplayer_peer = peer
 
 
-func _process(delta):
-	if is_main or is_test_one_object: clear_lines()
+func _process(_delta):
+	#if is_main or is_test_one_object: clear_lines()
+	if is_main: print_label()
+	
 
 func update_physics():
 	await get_tree().create_timer(1).timeout
@@ -144,7 +149,7 @@ func update_physics():
 
 func _on_timer_timeout():
 	all_move_down()
-
+	clear_lines()
 
 
 func draw(type, pos, team, degrees = 0):
@@ -159,43 +164,48 @@ func _clear(type, pos, team, degrees):
 
 
 func update(team, next_pos = null, next_degrees = null):
-	var pos = markers[team][2]
-	var degrees = markers[team][0]
+	var data_figure = _update(
+		markers[team][2], 
+		markers[team][0], 
+		markers[team][1], 
+		next_pos, 
+		next_degrees, 
+		team
+	)
 	
-	if next_pos != null:
-		pos = next_pos
-	if next_degrees != null:
-		degrees = next_degrees
-	
-	var figure = markers[team][1]
+	markers[team] = data_figure
+
+
+func _update(old_pos: Vector2, old_degrees: int, figure, pos = null, degrees = null, team: int = 0):		
+	if pos == null:
+		pos = old_pos
 		
-	_clear(figure, markers[team][2], team, markers[team][0])
+	if degrees == null:
+		degrees = old_degrees
+	
+	_clear(figure, old_pos, team, old_degrees)
 	draw(figure, pos, team, degrees)
 	
-	markers[team] = [degrees, figure, pos]
+	return [degrees, figure, pos]
 
 
 func move(team: int, direction: Vector2):
-	#clear_layer(1)
-	#clear_layer(2)
 	if markers.has(team):
+		
 		var collide = rect_check_collide(team, direction, markers[team][0])
-		#print(get_vector_side(direction), direction, collide)
-		#print('Collides move ', collide[0], ' ', collide[1],  ' ', get_rotated_sides(markers[team][0])[1])
 		if collide['down'] == true:
 			update_object(team)
 			return
 		
 		if collide[get_vector_side(direction)] == true:
 			return
-		#check_under_line(team)
 		
 		update(team, markers[team][2] + direction, null)
-		#rect_draw(team)
 		
+		clear_layer(1)
+		rect_draw(team)
 		
 		if collide['down'] == true:
-			#print(2)
 			update_object(team)
 			return
 
@@ -207,13 +217,15 @@ func m_up(team: int):
 	move(team, Vector2(0, -1))
 
 func m_right(team: int):
+	#print('right')
 	move(team, Vector2(1, 0))
 
 func m_left(team: int):
+	#print('left')
 	move(team, Vector2(-1, 0))
 
 
-func move_down(pos: Vector2, is_was_moved):
+func move_down(pos: Vector2, is_was_moved: Array, old_is_was_moved: Array):
 	var p = pos
 	p.y += 1
 	var cell = get_cell_atlas_coords(0, pos)
@@ -225,24 +237,29 @@ func move_down(pos: Vector2, is_was_moved):
 			is_was_moved.append(marker[1])
 		return
 	
-	
-	if get_cell_atlas_coords(0, p) == Vector2i(-1, -1) and cell != colors[teams['base']]:
-		ccell(pos)
-		_cell(p, cell)
+	if old_markers.has(pos):
+		if pos not in old_is_was_moved:
+			var rect = get_modified_figure(old_markers[pos][1])
+			
+			if _rect_check_collide(rect, rect, pos, 'down', false, old_markers[pos][2])['down'] == false:
+				_update(pos, old_markers[pos][0], old_markers[pos][1], p, null, old_markers[pos][2])
+			
+	#if get_cell_atlas_coords(0, p) == Vector2i(-1, -1) and cell != colors[teams['base']]:
+	#	ccell(pos)
+	#	_cell(p, cell)
 
 
-func moves_down(y, max_x, is_was_moved):
-	#print()
+func moves_down(y, max_x, is_was_moved, old_is_was_moved):
 	for i in range(0, max_x + 1):
-		#print(i, ' ', y)
-		move_down(Vector2(i, y), is_was_moved)
+		move_down(Vector2(i, y), is_was_moved, old_is_was_moved)
 
 
 func all_move_down(max_vector: Vector2 = Vector2(34, 20)):
 	var is_was_moved = []
+	var old_is_was_moved = []
 	
 	for i in range(0, max_vector.y + 1):
-		moves_down(max_vector.y - i, max_vector.x, is_was_moved)
+		moves_down(max_vector.y - i, max_vector.x, is_was_moved, old_is_was_moved)
 
 	
 
@@ -255,18 +272,18 @@ func marker_cells(vector: Vector2):
 
 
 func cw_rotate(team: int):
-	#clear_layer(1)
-	if is_collide_matrix(rect_check_collide(team, Vector2(-1, -1), markers[team][0] + 90)): 
-		return
-	
-	#print('cw ', markers[team][0])
-	update(team, null, markers[team][0] + 90)
-	#markers[team][0] += 90
-	
-	if markers[team][0] >= 360:
-		markers[team][0] = 0
+	clear_layer(1)
+	rect_draw(team)
+	#print('rotate')
+	if markers.has(team):
+		if is_collide_matrix(rect_check_collide(team, Vector2(-1, -1), markers[team][0] + 90)): 
+			return
+		#print(1)
 		
-	#rect_draw(team)	
+		update(team, null, markers[team][0] + 90)
+		
+		if markers[team][0] >= 360:
+			markers[team][0] = 0
 
 
 func get_rotated_sides(degrees: int):
@@ -287,8 +304,6 @@ func rotate_side(side: String, degrees: int):
 	var sides = ['up', 'down', 'right', 'left']
 	var index = sides.find(side)
 	
-	#print('ri: ', index, ' ', side)
-	
 	if index != -1:
 		return get_rotated_sides(degrees)[index]
 
@@ -297,10 +312,8 @@ func rotate_rect_sides(matrix: Dictionary, degrees: int):
 	var new_matrix = {}
 	var sides = get_rotated_sides(degrees)
 	var num_side = 0 
-	
-	#print('\n\n', degrees)
+
 	for i in matrix:
-		#print(i, ' ', sides[num_side])
 		new_matrix[sides[num_side]] = matrix[i]
 		num_side += 1
 		
@@ -309,9 +322,51 @@ func rotate_rect_sides(matrix: Dictionary, degrees: int):
 
 
 func add_object(type: String, pos: Vector2, team: int):
-	#print(type, ' ', pos, ' ', team)
+	print('Added object "', type, '" team\'s ', team)
+	
 	markers[team] = [0, type, pos]
 	draw(type, pos, team)	
+
+
+func get_center_figure(matrix: Array):
+	var new_matrix = []
+	var max_x = float(get_x_lenght_figure(matrix)[1])
+	var max_y = float(get_y_lenght_figure(matrix)[1])
+	
+	var m_x = 0
+	var m_y = 0
+	
+	if max_x != 0:
+		m_x = ceil(max_x / 2)
+	
+	if max_y != 0:
+		m_y = ceil(max_y / 2)
+	
+	for i in matrix:
+		var _in = i
+		_in.x -= m_x
+		_in.y -= m_y 
+		
+		new_matrix.append(_in) 
+	
+	return new_matrix
+	
+
+func get_center_rect(rect: Dictionary):
+	var new_rect = {}
+	
+	for i in rect:
+		new_rect[i] = get_center_figure(rect[i])
+	
+	return new_rect
+	
+
+func generate_figures_and_rect():
+	for i in figures:
+		print("'",i,"'")
+		print("    ", str(get_center_figure(figures[i])))	
+		print("    ", get_center_rect(rects[i]))	
+		print()
 
 
 func _rotate(matrix: Array, degrees: int): # rotation clockwise
@@ -333,39 +388,29 @@ func _rotate(matrix: Array, degrees: int): # rotation clockwise
 		new_matrix.append(cords)
 	
 	return new_matrix
-
-func __rotate(type, degrees):
-	#return _rotate(matrix, degrees)
 	
+	
+func __rotate(type, degrees):
 	var matrix = type
 	if typeof(matrix) == 4:
 		matrix = figures[type]
 	
 	elif degrees == 0 or degrees == -90:
-		return matrix
+		return matrix#get_center_figure(matrix)
 
-	
 	return _rotate(matrix, degrees)
 
 
 func rotate_rect(matrix_rect, degrees):
-	#print(degrees)
 	var new_matrix_rect = {}
 	var rotated_sides = get_rotated_sides(degrees)
 	var sides = ['up', 'down', 'right', 'left']
-	
-	#print(rotated_sides)
+
 	var ii = 0
 	for i in sides:
-		#print(i, ' ', ii, ' ', rotated_sides[ii])
 		new_matrix_rect[rotated_sides[ii]] = __rotate(matrix_rect[i], degrees)
-		ii += 1
-	#var rotated_sides = rotate_rect_sides(matrix_rect, degrees)
-	#for side in rotated_sides:
-	#	print(side,' ',rotate_side(side, degrees))
-	#	new_matrix_rect[side] = __rotate(matrix_rect[side], degrees)
-	
-	#print(new_matrix_rect)
+		ii += 1 
+		
 	return new_matrix_rect
 	
 
@@ -377,7 +422,7 @@ func _cell(pos, tile):
 		
 	if multiplayer.multiplayer_peer.get_class() == 'ENetMultiplayerPeer' and multiplayer.is_server():
 		get_parent().get_parent().rpc('update_cell', tile, pos)
-		#get_parent().get_parent().rpc('u')
+
 
 func cell(pos, team):
 	_cell(pos, colors[team])
@@ -389,26 +434,17 @@ func ccell(pos):
 func is_collide(team: int, pos: Vector2, degrees: int):
 	var figure = __rotate(markers[team][1], degrees)
 	var original_figure = __rotate(markers[team][1], markers[team][0])
-	#print(degrees, ' ', markers[team][0])
 	
 	return _is_collide(pos, figure, markers[team][2], original_figure)
 
 
 func _is_collide(pos: Vector2, matrix: PackedVector2Array, original_pos: Vector2, original_matrix: PackedVector2Array):
 	var ii = 0
-	#print(matrix, ' ', original_matrix)
-	#print(pos, ' ', original_pos)
+	
 	for i in matrix:
 		var cell = get_cell_atlas_coords(0, i + pos)
-		#print(original_matrix[ii] + original_pos, ' ', i+pos, ' ', cell != Vector2i(-1, -1))
 		if cell != Vector2i(-1, -1) and original_matrix[ii] + original_pos == i + pos: 
 			pass
-			#set_cell(2, i + pos, 1, Vector2i(1,1))
-			#return true
-		#if cell != Vector2i(-1, -1):
-		#	set_cell(2, i + pos, 1, Vector2i(1,1))
-		#	#if i + pos == back_matrix[ii] + pos:
-		#	return true
 			
 		ii += 1
 	
@@ -426,11 +462,8 @@ func is_collide_down_line(team: int):
 	var sizex = size_x(markers[team][1], markers[team][0])
 	var sizey = size_y(markers[team][1], markers[team][0])
 	
-	#print(sizex, ' x:y ', sizey)
-	
 	for x in range(sizex[0]):
 		var position_cell = math_line_down(markers[team][2], sizey[0], x, markers[team][0], sizex[1])
-		#set_cell(1, position_cell, 1, Vector2i(1,2))
 		
 		if get_cell_atlas_coords(0,position_cell) != Vector2i(-1, -1):
 			return true 
@@ -467,8 +500,6 @@ func size_y(figure: String, degrees: int):
 
 
 func math_line_down(pos: Vector2, sizey: int, count_x: int, deggress: int = 0, minx: int = 0):
-	#var 
-	#print('minx: ', minx)
 	return Vector2((pos.x + count_x - 1), pos.y + sizey)
 
 
@@ -492,21 +523,22 @@ func line_down(team: int):
 
 
 func rect_draw(team: int):
-	var rect = rotate_rect(rects[markers[team][1]], markers[team][0])
-	for i in rect:
-		var tile = back_colors[0]
-		
-		if i == 'up':
-			tile = back_colors[0]
-		elif i == 'down':
-			tile = back_colors[1]
-		elif i == 'right':
-			tile = back_colors[2]
-		elif i == 'left':
-			tile = back_colors[3]
-		
-		for cell in rect[i]:
-			set_cell(1, markers[team][2] + cell, 1, tile)
+	if markers.has(team):
+		var rect = rotate_rect(rects[markers[team][1]], markers[team][0])
+		for i in rect:
+			var tile = back_colors[teams['base']]
+			
+			if i == 'up':
+				tile = back_colors[teams['red']]
+			elif i == 'down':
+				tile = back_colors[teams['yellow']]
+			elif i == 'right':
+				tile = back_colors[teams['blue']]
+			elif i == 'left':
+				tile = back_colors[teams['green']]
+			
+			for cell in rect[i]:
+				set_cell(1, markers[team][2] + cell, 1, tile)
 
 
 func func_cell_rotate_not_in(cell, sides, is_rotate, atlas_coords, team_color):
@@ -528,8 +560,6 @@ func _rect_check_collide(matrix: Dictionary, old_matrix: Dictionary, pos: Vector
 		
 		var x = 0
 		for cell in matrix[_side]:
-			#print(get_cell_atlas_coords(0, pos + cell) != Vector2i(-1,-1), ' ', cell, ' ', func_cell_rotate_not_in(cell, old_sides, is_rotate))
-			#print(cell, ' ', get_cell_atlas_coords(0, pos + cell) != Vector2i(-1,-1))
 			var atlas_coords = get_cell_atlas_coords(0, pos + cell)
 			if (atlas_coords != Vector2i(-1,-1)) and func_cell_rotate_not_in(cell, old_sides, is_rotate, atlas_coords, team_color):#func_cell_rotate_not_in(cell, old_sides, false):
 				colliders[_side] = true
@@ -545,12 +575,12 @@ func rect_check_collide(team: int, vector: Vector2 = Vector2(-1, -1), degrees: i
 		is_rotate = true
 	
 	var rect = rotate_rect(rects[markers[team][1]], rot)
-	
 	var side = get_vector_side(vector)
-		
-	#print('rot: ', rot, ' side: ', side)
-	return _rect_check_collide(rect, rotate_rect(rects[markers[team][1]], markers[team][0]), markers[team][2], side, is_rotate, team)
 
+	var col = _rect_check_collide(rect, rotate_rect(rects[markers[team][1]], markers[team][0]), markers[team][2], side, is_rotate, team)
+	#print('Collide Team:', team, ' : ', col)
+	return col
+	
 
 func is_collide_matrix(matrix_collide: Dictionary):
 	for i in matrix_collide:
@@ -575,6 +605,48 @@ func get_vector_side(vector: Vector2):
 	return side
 
 
+
+func get_x_lenght_figure(figure: Array):
+	var min_x: int = 0
+	var max_x: int = 0
+	for i in figure:
+		if i.x > max_x:
+			max_x = i.x
+		
+		elif i.x < min_x:
+			min_x = i.x
+	
+	return [min_x, max_x]
+
+
+func get_y_lenght_figure(figure: Array):
+	var min_y: int = 0
+	var max_y: int = 0
+	for i in figure:
+		if i.y > max_y:
+			max_y = i.y
+		
+		elif i.y < min_y:
+			min_y = i.y
+	
+	return [min_y, max_y]
+
+
+func get_modified_figure(figure: Array):
+	var rect = {'up': [], 'down': [], 'right': [], 'left': []}
+	var _x = get_x_lenght_figure(figure)
+	
+	for side in [Vector2.UP, Vector2.DOWN, Vector2.RIGHT, Vector2.LEFT]:
+		var _side = get_vector_side(side)
+		
+		for i in figure:
+			var cordinate = i + side
+			if not figure.has(cordinate):
+				rect[_side].append(cordinate) 
+	
+	return rect
+
+
 func get_random_figure():
 	randomize()
 	return types[randi() % types.size()]
@@ -584,26 +656,28 @@ func check_under_line(team: int):
 	if is_collide_down_line(team):
 		markers.erase(team)
 		add_object(get_random_figure(), Vector2(1,1), team)
-		#clear_layer(1)
-		#clear_layer(2)
 		return
 
 
 func update_object(team: int):
-	old_markers[team] = {markers[team][2]: [markers[team][1], markers[team][0]]}
-	markers.erase(team)
-	
-	#await get_tree().create_timer(0.5).timeout
-	
-	#add_object(get_random_figure(), Vector2(1,1), team)
-	if multiplayer.multiplayer_peer.get_class() == 'ENetMultiplayerPeer' and multiplayer.is_server():
-		get_parent().get_parent().rpc('after_update_add_object', team)
-	
-	await get_tree().create_timer(0.4).timeout
+	#print(13, ' ', markers[team][1])
 	
 	if markers.has(team):
+		old_markers[markers[team][2]] = [markers[team][0], __rotate(figures[markers[team][1]], markers[team][0]), team, markers[team][1]]
+		markers.erase(team)
+		if multiplayer.multiplayer_peer.get_class() == 'ENetMultiplayerPeer' and multiplayer.is_server():
+			get_parent().get_parent().rpc('after_update_add_object', team)
+	
+	await get_tree().create_timer(1).timeout
+	
+	if markers.has(team):
+		await get_tree().create_timer(1.5).timeout
+		is_loose(team)
+		
+		
+func is_loose(team):
+	if markers.has(team):
 		var collide = rect_check_collide(team, Vector2(-1, -1), markers[team][0] + 90)
-		#print(collide)
 		if collide['down']:
 			print('u lose :(, '+ str(team))
 			_clear(markers[team][1], markers[team][2], team, markers[team][0])
@@ -611,15 +685,16 @@ func update_object(team: int):
 			
 			if multiplayer.multiplayer_peer.get_class() == 'ENetMultiplayerPeer':
 				get_parent().get_parent().rpc('team_loose', team)
+			
+			return
+	
 
 
 func update_line(cords: Vector2i = Vector2i(26, 0)): # max x = 20, y = 26
 	var base_color =  colors[teams['base']]
-	
 	var contribution_teams = {}
-	#print(cords)
+	
 	for ii in range(1, cords.x + 1):
-		#print(ii)
 		var coords = Vector2i(ii, cords.y)
 		
 		var atlas_coords = get_cell_atlas_coords(0, coords) 
@@ -633,20 +708,139 @@ func update_line(cords: Vector2i = Vector2i(26, 0)): # max x = 20, y = 26
 			contribution_teams[id_team] = 1
 		else:
 			contribution_teams[id_team] += 1
-		#set_cell(2, coords, 1, Vector2i(2,1))
 	
 	for i in range(1, cords.x + 1):
-		#erase_cell(2, Vector2i(i, cords.y))
 		ccell(Vector2(i, cords.y))
 	
 	if multiplayer.multiplayer_peer.get_class() == 'ENetMultiplayerPeer':
 		get_parent().get_parent().rpc('clear_line', get_percents_teams_contribution(contribution_teams), cords.y)
 
 
+func print_dict(dictionary):
+	print()
+	for i in dictionary:
+		print('  ', i, ': ', dictionary[i])
+
+
+func check_pos_old_marker_update_line(pos):
+	for old_marker in old_markers:
+		for i in old_markers[old_marker][1]:
+			#print(Vector2(i) + Vector2(old_marker), ' : ', pos)
+			if Vector2(Vector2(i) + Vector2(old_marker)) == pos:
+				#print(true)
+				return [true, old_marker]
+	
+	return [false]
+
+
+func delete_y_cords(pos: Vector2, base_pos: Vector2, line_color: Vector2i):
+	var new_figure = old_markers[pos][1]
+	#clear_layer(2)
+	
+	for i in old_markers[pos][1]:
+		#set_cell(2, base_pos, 1, line_color)	
+		if i.y == pos.y:		
+			new_figure.erase(i.y)
+	
+	#print('F:  ', old_markers[pos][1])
+	#print('NF: ', new_figure)
+	
+	old_markers[pos][1] = new_figure
+	#var posold = old_markers[pos]
+	#posold[1] = new_figure
+	#old_markers[pos] = posold
+
+
+func _update_line(cords: Vector2i = Vector2i(26, 0)): # max x = 20, y = 26
+	clear_layer(2)
+	
+	await get_tree().create_timer(1).timeout
+	
+	var base_color =  colors[teams['base']]
+	var line_color = back_colors[teams['yellow']]
+	var contribution_teams = {}
+	
+	for ii in range(1, cords.x + 1):
+		#clear_layer(2)
+		var iterable_cords = Vector2i(ii, cords.y)
+		var old_marker = check_pos_old_marker_update_line(iterable_cords)
+		
+		if old_marker[0]:
+			var coords = old_marker[1]
+			var atlas_coords = get_cell_atlas_coords(0, coords) 
+			var id_team = get_id_team_from_atlas_cords(atlas_coords)
+			
+			if atlas_coords == Vector2i(-1, -1) or atlas_coords == base_color:
+				return 
+			
+			
+			if contribution_teams.has(id_team) == false:
+				contribution_teams[id_team] = 1
+			else:
+				contribution_teams[id_team] += 1
+			
+			delete_y_cords(coords, iterable_cords, line_color)
+	
+	await get_tree().create_timer(1).timeout
+			#var rect = get_modified_figure(old_markers[coords][1])
+		
+			#if _rect_check_collide(rect, rect, coords, 'down', false, old_markers[coords][2])['down'] == false:
+			#	_update(coords, old_markers[coords][0], old_markers[coords][1], coords + Vector2.DOWN, null, old_markers[coords][2])
+	
+	
+	#for i in range(1, cords.x + 1):
+	#	var pos = Vector2(i, cords.y)
+	#	var rect = get_modified_figure(old_markers[pos][1])
+	#	
+	#	if _rect_check_collide(rect, rect, pos, 'down', false, old_markers[pos][2])['down'] == false:
+	#		_update(pos, old_markers[pos][0], old_markers[pos][1], pos + Vector2.DOWN, null, old_markers[pos][2])
+	
+	if multiplayer.multiplayer_peer.get_class() == 'ENetMultiplayerPeer' and multiplayer.is_server() != null:
+		get_parent().get_parent().rpc('clear_line', get_percents_teams_contribution(contribution_teams), cords.y)
+
+
+func __update_line(max_cords: Vector2i = Vector2i(26, 0), base_color: Vector2i = colors[teams['base']]): # max x = 20, y = 26
+	#clear_layer(2)
+	for i in range(1, max_cords.x):
+		#await get_tree().create_timer(0.4).timeout
+		
+		var tile_cords = Vector2(i, max_cords.y)
+		var atlas_cords = get_cell_atlas_coords(0, tile_cords)
+		
+		if atlas_cords == Vector2i(-1, -1):#or atlas_cords == base_color:
+			return
+		
+		var checked_figure = check_pos_old_marker_update_line(tile_cords)
+		
+		#set_cell(2, tile_cords, 1, base_color)
+		#print(tile_cords)
+		
+		if checked_figure[0]:
+			#var cords = checked_figure[1]
+			
+			#print('f')
+			#print(cords, ' c : tc ', tile_cords)
+			#if cords == tile_cords:
+			#var atlas_cords = get_cell_atlas_coords(0, tile_cords)
+			#print(atlas_cords)
+			#print()
+			#set_cell(2, tile_cords, 0, back_colors[teams['base']])
+				
+			#if atlas_cords == Vector2i(-1, -1) or atlas_cords == base_color:
+			#	break
+			
+			#if tile_cords.x >= max_cords.x:
+			#	print(1)
+			set_cell(2, tile_cords, 1, base_color)
+				#set_cell(2, tile_cords, 0, back_colors[teams['yellow']])
+		print(1)
+
 func clear_lines(cords: Vector2i = Vector2i(34, 20)):
 	#clear_layer(2)
-	for i in range(1, cords.y + 1):
-		update_line(Vector2i(cords.x, cords.y - i))
+	for i in range(1, cords.y - 1):
+		#clear_layer(2)
+		__update_line(Vector2i(cords.x + 1, cords.y - i))
+		await get_tree().create_timer(0.5).timeout
 
 
 func get_id_team_from_atlas_cords(atlas_coords: Vector2i):
@@ -681,25 +875,5 @@ func _input(event):
 func sum_reduce(accum: int, element: int) -> int:
 	return accum + element
 
-
-"""
-@rpc('any_peer')
-func update_cell(tile, pos):
-	if typeof(tile) == 2:
-		erase_cell(0, pos)
-	else:
-		set_cell(0, pos, 1, tile)
-	if is_rpc_test: print('Cell ' + str(tile) + ' on position ' + str(pos))
-	if is_main: 
-	
-@rpc('call_local')
-func clear_line(percents_teams, y):
-	if is_rpc_test: print('Cleared line on ' + str(y) + ' contribution teams: ' + str(percents_teams))
-
-@rpc('call_local')
-func team_loose(team):
-	if is_rpc_test: print('Eliminated team ' + str(team))
-
-@rpc('call_local')
-func after_update_add_object(team):
-	print(2)"""
+func print_label():
+	$Label.text = str(local_to_map(get_global_mouse_position()))

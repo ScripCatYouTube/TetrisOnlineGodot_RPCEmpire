@@ -177,11 +177,13 @@ func load_teams():
 
 
 func load_figure(team: int):
+	print('Preload figure. Team\'s ', team)
 	map.add_object(
 		map.get_random_figure(), 
 		map.local_to_map(get_node("positions_figures/" + str(team)).position), 
 		team
 	)	
+	map.is_loose(team)
 
 
 func load_figures():
@@ -262,3 +264,6 @@ func update_cell(tile, pos):
 @rpc('call_local')
 func after_update_add_object(team):
 	load_figure(team)
+
+@rpc('call_local')
+func clear_line(percents_teams, y): pass

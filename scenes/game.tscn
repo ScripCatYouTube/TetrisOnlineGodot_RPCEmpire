@@ -171,19 +171,19 @@ position = Vector2(576, 320)
 [node name="positions_figures" type="Node2D" parent="."]
 
 [node name="0" type="Marker2D" parent="positions_figures"]
-position = Vector2(96, 64)
+position = Vector2(96, 96)
 
 [node name="1" type="Marker2D" parent="positions_figures"]
-position = Vector2(288, 64)
+position = Vector2(288, 96)
 
 [node name="2" type="Marker2D" parent="positions_figures"]
-position = Vector2(576, 64)
+position = Vector2(576, 96)
 
 [node name="3" type="Marker2D" parent="positions_figures"]
-position = Vector2(832, 64)
+position = Vector2(832, 96)
 
 [node name="4" type="Marker2D" parent="positions_figures"]
-position = Vector2(1024, 64)
+position = Vector2(1024, 96)
 
 [connection signal="button_down" from="back_menu/back" to="." method="_on_back_button_down"]
 [connection signal="canceled" from="back_menu/back_dialog" to="." method="_on_back_dialog_canceled"]
