@@ -5,7 +5,7 @@ var PORT = 8901
 var MAX_CONNECTIONS = 16
 
 var password = null
-var file_account = 'res://dont_send_me_nobody.json'
+var file_account = 'res://.dont_send_me_nobody.json'
 
 var peer = ENetMultiplayerPeer.new()
 

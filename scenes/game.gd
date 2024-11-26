@@ -183,6 +183,9 @@ func load_figure(team: int):
 		map.local_to_map(get_node("positions_figures/" + str(team)).position), 
 		team
 	)	
+	
+	await get_tree().create_timer(2).timeout
+	
 	map.is_loose(team)
 
 
