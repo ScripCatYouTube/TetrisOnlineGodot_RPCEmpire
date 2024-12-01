@@ -165,7 +165,8 @@ func _on_timer_timeout():
 
 
 func _on_timer_2_timeout():
-	old_figures_move()
+	pass
+	#old_figures_move()
 
 
 func draw(type, pos, team, degrees = 0):
@@ -176,7 +177,7 @@ func draw(type, pos, team, degrees = 0):
 
 func _clear(type, pos, team, degrees):
 	for i in __rotate(type, degrees):
-		ccell(pos + i)
+		ccell(pos + i, '_clear')
 
 
 func update(team, next_pos = null, next_degrees = null):
@@ -211,7 +212,7 @@ func move(team: int, direction: Vector2):
 		clear_layer(1)
 		rect_draw(team)
 		var collide = rect_check_collide(team, direction, markers[team][0])
-		print('Team ', team, ' collided ', collide)
+		#print('Team ', team, ' collided ', collide)
 		if collide['down'] == true:
 			print('Delete ', team, ' team\'s object. Collide down is ', collide['down'])
 			update_object(team)
@@ -231,19 +232,19 @@ func move(team: int, direction: Vector2):
 
 
 func m_down(team: int):
-	print('Team ', team, ' Pressed Down')
+	#print('Team ', team, ' Pressed Down')
 	move(team, Vector2(0, 1))
 
 func m_up(team: int):
-	print('Team ', team, ' Pressed Up (CW Rotate)')
+	#print('Team ', team, ' Pressed Up (CW Rotate)')
 	move(team, Vector2(0, -1))
 
 func m_right(team: int):
-	print('Team ', team, ' Pressed Right')
+	#print('Team ', team, ' Pressed Right')
 	move(team, Vector2(1, 0))
 
 func m_left(team: int):
-	print('Team ', team, ' Pressed Left')
+	#print('Team ', team, ' Pressed Left')
 	move(team, Vector2(-1, 0))
 
 
@@ -463,8 +464,9 @@ func _cell(pos, tile):
 func cell(pos, team):
 	_cell(pos, colors[team])
 
-func ccell(pos):
+func ccell(pos, tag):
 	_cell(pos, -1)
+	#print('Ccell ', pos, ' Tag: ', tag)
 
 
 func is_collide(team: int, pos: Vector2, degrees: int):
@@ -547,7 +549,7 @@ func _draw_line_down(pos: Vector2, sizex: int, sizey: int, tile: Vector2 = Vecto
 			_cell(position_cell, tile)
 			
 		else:
-			ccell(position_cell)
+			ccell(position_cell, '_draw_line_down')
 
 
 func line_down(team: int):
@@ -749,7 +751,7 @@ func update_line(cords: Vector2i = Vector2i(26, 0)): # max x = 20, y = 26
 			contribution_teams[id_team] += 1
 	
 	for i in range(1, cords.x + 1):
-		ccell(Vector2(i, cords.y))
+		ccell(Vector2(i, cords.y), 'update_line')
 	
 	if multiplayer.multiplayer_peer.get_class() == 'ENetMultiplayerPeer':
 		get_parent().get_parent().rpc('clear_line', get_percents_teams_contribution(contribution_teams), cords.y)
@@ -772,11 +774,42 @@ func check_pos_old_marker_update_line(pos):
 	return [false]
 
 
-func delete_y_cords(pos: Vector2):#, base_pos: Vector2, line_color: Vector2i):
-	#if old_markers.has(pos):
-	var list_cords = []
+func custom_sorting_function(a, b):
+	if a[0].y < b[0].y:
+		return true
+	if a[0].x > b[0].x:
+		return true
+	return false
+
+
+func get_reversed_old_figures(y):
+	var old_figures = []
 	
-	for old_marker in old_markers:
+	for marker in old_markers:
+		for template_pos_square in old_markers[marker][1]:
+			var real_pos_square = Vector2(marker) + Vector2(template_pos_square)
+			
+			if real_pos_square.y == y:
+				old_figures.append([real_pos_square, template_pos_square, marker])
+	
+	old_figures.sort_custom(custom_sorting_function)
+	
+	return old_figures
+	
+	
+	
+
+func delete_y_cords(pos: Vector2):#, base_pos: Vector2, line_color: Vector2i):
+	print()
+	print(old_markers)
+	print()
+	print(get_reversed_old_figures(pos.y))
+	print()
+	
+	var list_cords = get_reversed_old_figures(pos.y)
+	#var list_cords = []
+	
+	"""for old_marker in old_markers:
 		for i in old_markers[old_marker][1]:
 			var p = Vector2(old_marker) + Vector2(i)
 			#print(Vector2(i) + Vector2(old_marker), ' : ', pos)
@@ -785,21 +818,25 @@ func delete_y_cords(pos: Vector2):#, base_pos: Vector2, line_color: Vector2i):
 			if p.y == pos.y:	
 				#print('\n', p)
 				#print('erased\n')	
+				#ccell(p)
 				list_cords.append([i, old_marker, p])
+				#old_markers[old_marker][1].erase(i)
+				#if old_markers[old_marker][1] == []: old_markers.erase(old_marker)
 					#clear_old_figures()
 				#old_markers[old_marker][1].erase(i)
 				#ccell(p)
-					#draw_old_figures()
+					#draw_old_figures()"""
 	
 	var old_figures = []
 	
 	print()
 	for i in list_cords:
-		if old_markers.has(i[1]): 
-			print('erased ', i[2], ' ', i[0], ' ', old_markers[i[1]][1])
-			ccell(i[2])
-			old_markers[i[1]][1].erase(i[0])
-			old_figure_move(i[1])
+		if old_markers.has(i[2]): 
+			ccell(i[0], 'delete_y_cords')
+			print('erased ', i[0], ' ', i[2], ' ', i[1], ' ', old_markers[i[2]][1])
+			old_markers[i[2]][1].erase(i[1])
+			if old_markers[i[2]][1] == []: old_markers.erase(i[2])
+			#old_figure_move(i[1])
 			#old_move_down(i[1], old_figures)
 			#old_markers[i[1]][1].erase(i[0])
 	print()
@@ -811,6 +848,18 @@ func delete_y_cords(pos: Vector2):#, base_pos: Vector2, line_color: Vector2i):
 	#var posold = old_markers[pos]
 	#posold[1] = new_figure
 	#old_markers[pos] = posold
+
+func check_is_not_marker(tile_cords):
+	for i in markers:
+		var rotated_matrix = __rotate(markers[i][1], markers[i][0])
+		
+		for cord in rotated_matrix:
+			var real_cords = markers[i][2] + cord
+
+			if real_cords.y == tile_cords.y: 
+				return true
+	
+	return false
 
 
 func _update_line(cords: Vector2i = Vector2i(26, 0)): # max x = 20, y = 26
@@ -893,6 +942,8 @@ func __update_line(max_cords: Vector2i = Vector2i(26, 0), base_color: Vector2i =
 			var min_x = 3
 			
 			set_cell(2, tile_cords, 1, base_color)
+			
+			if check_is_not_marker(tile_cords): break
 			
 			if tile_cords.x >= min_x:#max_cords.x - 1:
 				delete_y_cords(tile_cords)
@@ -982,6 +1033,7 @@ func old_figures_move():
 	
 	for figure in old_markers:
 			old_figure_move(figure)
+
 
 func old_figure_move(figure):
 	var p = figure + Vector2.DOWN

@@ -186,7 +186,7 @@ func load_figure(team: int):
 	
 	await get_tree().create_timer(2).timeout
 	
-	map.is_loose(team)
+	#map.is_loose(team)
 
 
 func load_figures():
