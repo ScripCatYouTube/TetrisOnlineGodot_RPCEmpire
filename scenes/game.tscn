@@ -185,6 +185,10 @@ position = Vector2(832, 96)
 [node name="4" type="Marker2D" parent="positions_figures"]
 position = Vector2(1024, 96)
 
+[node name="timer_check_loose" type="Timer" parent="."]
+wait_time = 2.0
+
 [connection signal="button_down" from="back_menu/back" to="." method="_on_back_button_down"]
 [connection signal="canceled" from="back_menu/back_dialog" to="." method="_on_back_dialog_canceled"]
 [connection signal="confirmed" from="back_menu/back_dialog" to="." method="_on_back_dialog_confirmed"]
+[connection signal="timeout" from="timer_check_loose" to="." method="_on_timer_check_loose_timeout"]

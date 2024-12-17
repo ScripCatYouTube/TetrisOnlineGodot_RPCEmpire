@@ -12,8 +12,10 @@ extends Node2D
 
 var teams = {} # name: [team, is_free_timer]
 var cooldown_response_keys = 0.05
+var timer_checker_loose_teams = []
 
 @onready var dialog_window = $back_menu/back_dialog
+@onready var timer_check_loose = $timer_check_loose
 @onready var map = $figures/Map
 
 var rng = RandomNumberGenerator.new()
@@ -184,7 +186,10 @@ func load_figure(team: int):
 		team
 	)	
 	
-	await get_tree().create_timer(2).timeout
+	timer_check_loose.start(2)
+	timer_checker_loose_teams.append(team)
+	
+	#await get_tree().create_timer(5).timeout
 	
 	#map.is_loose(team)
 
@@ -257,6 +262,7 @@ func m_left(team: int):
 func m_down(team: int):
 	map.m_down(team)
 
+
 @rpc#('any_peer', 'call_local')
 func update_cell(tile, pos):
 	if typeof(tile) == 2:
@@ -264,9 +270,19 @@ func update_cell(tile, pos):
 	else:
 		map.set_cell(0, pos, 1, tile)
 
+
 @rpc('call_local')
 func after_update_add_object(team):
 	load_figure(team)
 
+
 @rpc('call_local')
 func clear_line(percents_teams, y): pass
+
+
+func _on_timer_check_loose_timeout():
+	if timer_checker_loose_teams.size() == 0:
+		var team = timer_checker_loose_teams[0]
+		timer_checker_loose_teams.erase(team)
+		print('L1')
+		map.is_loose(team)

@@ -19,7 +19,7 @@ var teams = {'red': 0, 'blue': 1, 'yellow': 2, 'green': 3, 'pink': 4, 'base': 5}
 var colors = [Vector2i(0,0), Vector2i(0,1), Vector2i(1,0), Vector2i(1,1), Vector2i(0,2), Vector2i(1,2)]
 var back_colors = [Vector2i(2, 0), Vector2i(2, 1), Vector2i(3, 0), Vector2i(3, 1), Vector2i(2, 2), Vector2i(3,2)]
 
-var figures = {
+const figures = {
 	'square': [Vector2(-1, -1), Vector2(-1, 0), Vector2(0, -1), Vector2(0, 0)],
 	'gamma': [Vector2(0, -1), Vector2(-1, -1), Vector2(-1, 0), Vector2(1, -1)],
 	'gamma_reversed': [Vector2(-1, -1), Vector2(0, -1), Vector2(1, -1), Vector2(1, 0)],
@@ -27,7 +27,7 @@ var figures = {
 	'line': [Vector2(0, -2), Vector2(0, -1), Vector2(0, 0), Vector2(0, 1)]
 }
 
-var rects = {
+const rects = {
 	'square': 
 		{ 
 			"up": [Vector2(-1, -2), Vector2(0, -2)], 
@@ -98,6 +98,8 @@ func _ready():
 	if is_test_one_object: add_object(get_random_figure(), Vector2(2,1), 2)
 	#await get_tree().create_timer(1).timeout
 	#all_move_down()
+	
+	get_size_map()
 
 func test():
 	var escape = 0
@@ -154,18 +156,19 @@ func _process(_delta):
 	if is_test_modified_figure: test_modified_figure_rect()
 	
 
+
+
 func update_physics():
-	await get_tree().create_timer(1).timeout
 	all_move_down()
+	all_old_move_down(tiles_size)
 
 
 func _on_timer_timeout():
-	all_move_down()
 	clear_lines()
 
 
 func _on_timer_2_timeout():
-	pass
+	update_physics()
 	#old_figures_move()
 
 
@@ -210,7 +213,7 @@ func move(team: int, direction: Vector2):
 	if markers.has(team):
 		
 		clear_layer(1)
-		rect_draw(team)
+		#rect_draw(team)
 		var collide = rect_check_collide(team, direction, markers[team][0])
 		#print('Team ', team, ' collided ', collide)
 		if collide['down'] == true:
@@ -224,7 +227,7 @@ func move(team: int, direction: Vector2):
 		update(team, markers[team][2] + direction, null)
 		
 		clear_layer(1)
-		rect_draw(team)
+		#rect_draw(team)
 		
 		#if collide['down'] == true:
 		#	update_object(team)
@@ -309,8 +312,8 @@ func marker_cells(vector: Vector2):
 
 
 func cw_rotate(team: int):
-	clear_layer(1)
-	rect_draw(team)
+	#clear_layer(1)
+	#rect_draw(team)
 	#print('rotate')
 	if markers.has(team):
 		if is_collide_matrix(rect_check_collide(team, Vector2(-1, -1), markers[team][0] + 90)): 
@@ -360,6 +363,10 @@ func rotate_rect_sides(matrix: Dictionary, degrees: int):
 
 func add_object(type: String, pos: Vector2, team: int):
 	print('Added object "', type, '" team\'s ', team)
+	print(figures[type])
+	print()
+	
+	
 	
 	markers[team] = [0, type, pos]
 	draw(type, pos, team)	
@@ -399,6 +406,7 @@ func get_center_rect(rect: Dictionary):
 	
 
 func generate_figures_and_rect():
+	return
 	for i in figures:
 		print("'",i,"'")
 		print("    ", str(get_center_figure(figures[i])))	
@@ -829,17 +837,21 @@ func delete_y_cords(pos: Vector2):#, base_pos: Vector2, line_color: Vector2i):
 	
 	var old_figures = []
 	
-	print()
+	#print()
+	#print(old_markers)
 	for i in list_cords:
 		if old_markers.has(i[2]): 
 			ccell(i[0], 'delete_y_cords')
-			print('erased ', i[0], ' ', i[2], ' ', i[1], ' ', old_markers[i[2]][1])
+			#print('erased ', i[0], ' ', i[2], ' ', i[1], ' ', old_markers[i[2]][1])
 			old_markers[i[2]][1].erase(i[1])
-			if old_markers[i[2]][1] == []: old_markers.erase(i[2])
+			if old_markers[i[2]][1].is_empty(): old_markers.erase(i[2])
 			#old_figure_move(i[1])
 			#old_move_down(i[1], old_figures)
 			#old_markers[i[1]][1].erase(i[0])
-	print()
+	#old_figures_move()
+	#print()
+	
+	#print(old_markers)
 		#old_move_down(i[1], old_figures)
 		#ccell(i[2])
 	#print('F:  ', old_markers[pos][1])
@@ -939,7 +951,7 @@ func __update_line(max_cords: Vector2i = Vector2i(26, 0), base_color: Vector2i =
 				
 			#if atlas_cords == Vector2i(-1, -1) or atlas_cords == base_color:
 			#	break
-			var min_x = 3
+			var min_x = tiles_size.x - 1
 			
 			set_cell(2, tile_cords, 1, base_color)
 			
@@ -951,10 +963,11 @@ func __update_line(max_cords: Vector2i = Vector2i(26, 0), base_color: Vector2i =
 			#set_cell(2, tile_cords, 1, base_color)
 				#set_cell(2, tile_cords, 0, back_colors[teams['yellow']])
 		#print(1)
+		
 
 func clear_lines(cords: Vector2i = Vector2i(34, 20)):
 	#clear_layer(2)
-	for i in range(1, cords.y - 1):
+	for i in range(1, cords.y): #- 1):
 		#clear_layer(2)
 		__update_line(Vector2i(cords.x + 1, cords.y - i))
 		#await get_tree().create_timer(0.5).timeout
@@ -1028,7 +1041,7 @@ func test_modified_figure_rect():
 	
 func old_figures_move():
 	#print(1)
-	return
+	#return
 	var moved_old_figures = []
 	
 	for figure in old_markers:
@@ -1040,10 +1053,10 @@ func old_figure_move(figure):
 	var rect = get_modified_figure(old_markers[figure][1])
 			
 	_rect_draw(rect, figure, ['down'])
-	print(old_markers[figure][1])
+	#print(old_markers[figure][1])
 			
 	if _rect_check_collide(rect, rect, figure, 'down', false, old_markers[figure][2])['down'] == false:
-		print(1)
+		#print(1)
 		var team = old_markers[figure][2]
 				
 		var updated_data = _update(figure, old_markers[figure][0], old_markers[figure][1], p, null, old_markers[figure][2])
@@ -1052,6 +1065,33 @@ func old_figure_move(figure):
 				
 		# return [degrees, figure, pos]
 		old_markers[updated_data[2]] = [updated_data[0], updated_data[1], team]
+
+func move_old_cells_down(pos: Vector2, is_was_moved):
+	var p = pos
+	p.y += 1
+	var cell = get_cell_atlas_coords(0, pos)
+	
+	for i in markers:
+		for c in __rotate(markers[i][1], markers[i][0]):
+			if pos == markers[i][2] + c: return
+			
+	if get_cell_atlas_coords(0, p) == Vector2i(-1, -1) and cell != colors[teams['base']]:
+		ccell(pos, 'move_old')
+		_cell(p, cell)
+
+
+func move_old_down(y, max_x, is_was_moved):
+	#print()
+	for i in range(0, max_x + 1):
+		#print(i, ' ', y)
+		move_old_cells_down(Vector2(i, y), is_was_moved)
+
+
+func all_old_move_down(max_vector: Vector2 = Vector2(34, 20)):
+	var is_was_moved = []
+	
+	for i in range(0, max_vector.y + 1):
+		move_old_down(max_vector.y - i, max_vector.x, is_was_moved)
 #func update_old_figures():
 #	clear_old_figures()
 #	draw_old_figures()
