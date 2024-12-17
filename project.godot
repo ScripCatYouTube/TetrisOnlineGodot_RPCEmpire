@@ -22,6 +22,10 @@ DB="*res://global_scripts/db.gd"
 ManageFile="*res://global_scripts/manage_file.gd"
 ButtonsMode="*res://global_scripts/buttons_mode.gd"
 
+[display]
+
+window/stretch/mode="viewport"
+
 [input]
 
 change_window_mode={
